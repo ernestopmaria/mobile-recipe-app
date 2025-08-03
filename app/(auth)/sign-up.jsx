@@ -15,6 +15,7 @@ import { authStyles } from "../../assets/styles/auth.styles";
 import { Image } from "expo-image";
 import { COLORS } from "../../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
+import VerifyEmail from "./verify-email";
 
 const SignupScreen = () => {
   const router = useRouter();
@@ -67,7 +68,10 @@ const SignupScreen = () => {
       setLoading(false);
     }
   };
-  if (pendingVerification) return <Text>Verification pending...</Text>;
+  if (pendingVerification)
+    return (
+      <VerifyEmail email={email} OnBack={() => pendingVerification(false)} />
+    ); // Assuming you have a VerifyEmailScreen component
 
   return (
     <View style={authStyles.container}>
