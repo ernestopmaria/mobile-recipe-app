@@ -20,26 +20,25 @@ import { COLORS } from "../../constants/colors";
 
 const SignInScreen = () => {
   const router = useRouter();
-  const { sigIn, setActive, isLoaded } = useSignIn();
+  const { signIn, setActive, isLoaded } = useSignIn();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSignIn = async () => {
-    setLoading(true);
     if (!email || !password) {
-      Alert.alert("Error", "Email and password are required.");
-      setLoading(false);
+      Alert.alert("Error", "Please fill in all fields");
       return;
     }
+    if (!isLoaded) return;
     setLoading(true);
     try {
-      const signInAttempt = await sigIn.create({
+      const signInAttempt = await signIn.create({
         identifier: email,
         password,
       });
-      if (signInAttempt.status === "complete") {
+      if (signInAttempt.status === "completed") {
         await setActive({ session: signInAttempt.createdSessionId });
       } else {
         Alert.alert(
@@ -66,6 +65,7 @@ const SignInScreen = () => {
       <KeyboardAvoidingView
         style={authStyles.keyboardView}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       >
         <ScrollView
           contentContainerStyle={authStyles.scrollContent}
@@ -114,6 +114,29 @@ const SignInScreen = () => {
                 />
               </TouchableOpacity>
             </View>
+            <TouchableOpacity
+              style={[
+                authStyles.authButton,
+                loading && authStyles.buttonDisabled,
+              ]}
+              onPress={handleSignIn}
+              disabled={loading}
+              activeOpacity={0.8}
+            >
+              <Text style={authStyles.buttonText}>
+                {loading ? "Signing in..." : "Sign In"}
+              </Text>
+            </TouchableOpacity>
+            {/* SIGN UP LINK */}
+            <TouchableOpacity
+              style={authStyles.linkContainer}
+              onPress={() => router.push("/(auth)/sign-up")}
+            >
+              <Text style={authStyles.linkText}>
+                Don&apos;t have an account?{" "}
+                <Text style={authStyles.link}>Sign Up</Text>
+              </Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
