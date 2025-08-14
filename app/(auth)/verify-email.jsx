@@ -1,6 +1,18 @@
-import { View, Text, Alert } from "react-native";
+import {
+  View,
+  Text,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import { useSignUp } from "@clerk/clerk-react";
 import React, { useState } from "react";
+import { authStyles } from "../../assets/styles/auth.styles";
+import { Image } from "expo-image";
+import { COLORS } from "../../constants/colors";
 
 const VerifyEmail = ({ email, onBack }) => {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -37,8 +49,60 @@ const VerifyEmail = ({ email, onBack }) => {
   };
 
   return (
-    <View>
-      <Text>VerifyEmailScreen</Text>
+    <View style={authStyles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={authStyles.keyboardView}
+      >
+        <ScrollView
+          contentContainerStyle={authStyles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <Image
+            source={require("../../assets/images/i3.png")}
+            style={authStyles.image}
+            contentFit="contain"
+          />
+          <Text style={authStyles.title}>Verify Your Email</Text>
+          <Text style={authStyles.subtitle}>
+            We have sent a verification code to {email}. Please enter the code
+            below to verify your email address.
+          </Text>
+          <View style={authStyles.formContainer}>
+            <TextInput
+              style={authStyles.textInput}
+              placeholder="Enter verification code"
+              placeholderTextColor={COLORS.textLight}
+              value={code}
+              onChangeText={setCode}
+              keyboardType="number-pad"
+              autoCapitalize="none"
+            />
+          </View>
+          <TouchableOpacity
+            style={[
+              authStyles.authButton,
+              loading && authStyles.buttonDisabled,
+            ]}
+            onPress={handleVerification}
+            disabled={loading}
+            activeOpacity={0.8}
+          >
+            <Text style={authStyles.buttonText}>
+              {loading ? "Verifying..." : "Verify Email"}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={authStyles.linkContainer}
+            onPress={onBack}
+            activeOpacity={0.8}
+          >
+            <Text style={authStyles.linkText}>
+              <Text style={authStyles.link}>← Back to Sign Up</Text>
+            </Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 };

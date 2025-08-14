@@ -52,7 +52,7 @@ const SignupScreen = () => {
           {
             text: "OK",
             onPress: () => {
-              router.push("/auth/verify-email");
+              router.push("/(rauth)/verify-email");
             },
           },
         ]
