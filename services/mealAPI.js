@@ -45,10 +45,22 @@ export const MealAPI = {
       return [];
     }
   },
-  getCategories: async (caterory) => {
+
+  getCategories: async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/categories.php`);
+      const data = await response.json();
+      return data.categories || [];
+    } catch (error) {
+      console.error("Error getting categories:", error);
+      return [];
+    }
+  },
+
+  filterByCategory: async (category) => {
     try {
       const response = await fetch(
-        `${BASE_URL}/filter.php?c=${encodeURIComponent(caterory)}`
+        `${BASE_URL}/filter.php?c=${encodeURIComponent(category)}`
       );
       const data = await response.json();
       return data.categories || [];
