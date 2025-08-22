@@ -94,7 +94,7 @@ export const MealAPI = {
         ? meal.strInstructions.substring(0, 120) + "..."
         : "Delicious meal",
       image: meal.strMealThumb,
-      cookingTime: meal.strCookTime || "30 minutes",
+      cookTime: meal.strCookTime || "30 minutes",
       servings: meal.strServings || 4,
       category: meal.strCategory || "Main Course",
       area: meal.strArea,

@@ -6,6 +6,7 @@ import { homeStyles } from "../../assets/styles/home.styles";
 import { Image } from "expo-image";
 import { COLORS } from "../../constants/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import CategoryFilter from "../components/CategoryFilter";
 
 const HomeScreen = () => {
   const router = useRouter();
@@ -139,15 +140,34 @@ const HomeScreen = () => {
                           color={COLORS.white}
                         />
                         <Text style={homeStyles.metaText}>
-                          {featuredRecipe.servings} Servings
+                          {featuredRecipe.servings}
                         </Text>
                       </View>
+                      {featuredRecipe.area && (
+                        <View style={homeStyles.metaItem}>
+                          <Ionicons
+                            name="location-outline"
+                            size={16}
+                            color={COLORS.white}
+                          />
+                          <Text style={homeStyles.metaText}>
+                            {featuredRecipe.area}
+                          </Text>
+                        </View>
+                      )}
                     </View>
                   </View>
                 </View>
               </View>
             </TouchableOpacity>
           </View>
+        )}
+        {categories.length > 0 && (
+          <CategoryFilter
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onSelectCategory={handleCategorySelect}
+          />
         )}
       </ScrollView>
     </View>
