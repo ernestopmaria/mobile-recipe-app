@@ -63,7 +63,7 @@ export const MealAPI = {
         `${BASE_URL}/filter.php?c=${encodeURIComponent(category)}`
       );
       const data = await response.json();
-      return data.categories || [];
+      return data.meals || [];
     } catch (error) {
       console.error("Error fetching categories:", error);
       return [];
@@ -89,7 +89,7 @@ export const MealAPI = {
       : [];
     return {
       id: meal.idMeal,
-      name: meal.strMeal,
+      title: meal.strMeal,
       description: meal.strInstructions
         ? meal.strInstructions.substring(0, 120) + "..."
         : "Delicious meal",

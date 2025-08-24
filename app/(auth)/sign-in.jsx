@@ -40,6 +40,7 @@ const SignInScreen = () => {
       });
       if (signInAttempt.status === "completed") {
         await setActive({ session: signInAttempt.createdSessionId });
+        router.replace("/");
       } else {
         Alert.alert(
           "Sign-in failed",

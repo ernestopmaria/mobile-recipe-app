@@ -1,12 +1,19 @@
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
-import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
+import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import { MealAPI } from "../../services/mealAPI";
 import { homeStyles } from "../../assets/styles/home.styles";
 import { Image } from "expo-image";
 import { COLORS } from "../../constants/colors";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { Ionicons } from "@expo/vector-icons";
 import CategoryFilter from "../components/CategoryFilter";
+import RecipeCard from "../components/RecipeCard";
 
 const HomeScreen = () => {
   const router = useRouter();
@@ -20,28 +27,34 @@ const HomeScreen = () => {
   const loadData = async () => {
     try {
       setLoading(true);
+
       const [apiCategories, randomMeals, featuredMeal] = await Promise.all([
         MealAPI.getCategories(),
         MealAPI.getRandomMeals(12),
         MealAPI.getRandomMeal(),
       ]);
-      const transformedCategory = apiCategories.map((cat, index) => ({
+
+      const transformedCategories = apiCategories.map((cat, index) => ({
         id: index + 1,
         name: cat.strCategory,
         image: cat.strCategoryThumb,
         description: cat.strCategoryDescription,
       }));
-      setCategories(transformedCategory);
+
+      setCategories(transformedCategories);
+
+      if (!selectedCategory) setSelectedCategory(transformedCategories[0].name);
 
       const transformedMeals = randomMeals
         .map((meal) => MealAPI.transformMealData(meal))
         .filter((meal) => meal !== null);
 
       setRecipes(transformedMeals);
-      const transformedFeaturedMeal = MealAPI.transformMealData(featuredMeal);
-      setFeaturedRecipe(transformedFeaturedMeal);
+
+      const transformedFeatured = MealAPI.transformMealData(featuredMeal);
+      setFeaturedRecipe(transformedFeatured);
     } catch (error) {
-      console.error("Error loading data:", error);
+      console.log("Error loading the data", error);
     } finally {
       setLoading(false);
     }
@@ -169,6 +182,35 @@ const HomeScreen = () => {
             onSelectCategory={handleCategorySelect}
           />
         )}
+
+        <View style={homeStyles.recipesSection}>
+          <View style={homeStyles.sectionHeader}>
+            <Text style={homeStyles.sectionTitle}>{selectedCategory}</Text>
+          </View>
+          {recipes.length > 0 ? (
+            <FlatList
+              data={recipes}
+              renderItem={({ item }) => <RecipeCard recipe={item} />}
+              keyExtractor={(item) => item.id.toString()}
+              numColumns={2}
+              columnWrapperStyle={homeStyles.row}
+              contentContainerStyle={homeStyles.recipesGrid}
+              scrollEnabled={false}
+            />
+          ) : (
+            <View style={homeStyles.emptyState}>
+              <Ionicons
+                name="restaurant-outline"
+                size={64}
+                color={COLORS.textLight}
+              />
+              <Text style={homeStyles.emptyTitle}>No recipes found</Text>
+              <Text style={homeStyles.emptyDescription}>
+                Try selecting a different category
+              </Text>
+            </View>
+          )}
+        </View>
       </ScrollView>
     </View>
   );
