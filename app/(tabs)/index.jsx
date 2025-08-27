@@ -4,6 +4,7 @@ import {
   ScrollView,
   TouchableOpacity,
   FlatList,
+  RefreshControl,
 } from "react-native";
 import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
@@ -79,6 +80,13 @@ const HomeScreen = () => {
     await loadCategoryData(category);
   };
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+
+    await loadData();
+    setRefreshing(false);
+  };
+
   useEffect(() => {
     loadData();
   }, []);
@@ -87,7 +95,13 @@ const HomeScreen = () => {
     <View style={homeStyles.container}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        refreshControl={() => {}}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={COLORS.primary}
+          />
+        }
         contentContainerStyle={homeStyles.scrollContent}
       >
         <View style={homeStyles.welcomeSection}>
@@ -187,29 +201,28 @@ const HomeScreen = () => {
           <View style={homeStyles.sectionHeader}>
             <Text style={homeStyles.sectionTitle}>{selectedCategory}</Text>
           </View>
-          {recipes.length > 0 ? (
-            <FlatList
-              data={recipes}
-              renderItem={({ item }) => <RecipeCard recipe={item} />}
-              keyExtractor={(item) => item.id.toString()}
-              numColumns={2}
-              columnWrapperStyle={homeStyles.row}
-              contentContainerStyle={homeStyles.recipesGrid}
-              scrollEnabled={false}
-            />
-          ) : (
-            <View style={homeStyles.emptyState}>
-              <Ionicons
-                name="restaurant-outline"
-                size={64}
-                color={COLORS.textLight}
-              />
-              <Text style={homeStyles.emptyTitle}>No recipes found</Text>
-              <Text style={homeStyles.emptyDescription}>
-                Try selecting a different category
-              </Text>
-            </View>
-          )}
+          <FlatList
+            data={recipes}
+            renderItem={({ item }) => <RecipeCard recipe={item} />}
+            keyExtractor={(item) => item.id.toString()}
+            numColumns={2}
+            columnWrapperStyle={homeStyles.row}
+            contentContainerStyle={homeStyles.recipesGrid}
+            scrollEnabled={false}
+            ListEmptyComponent={
+              <View style={homeStyles.emptyState}>
+                <Ionicons
+                  name="restaurant-outline"
+                  size={64}
+                  color={COLORS.textLight}
+                />
+                <Text style={homeStyles.emptyTitle}>No recipes found</Text>
+                <Text style={homeStyles.emptyDescription}>
+                  Try selecting a different category
+                </Text>
+              </View>
+            }
+          />
         </View>
       </ScrollView>
     </View>
